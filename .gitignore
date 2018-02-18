@@ -1,0 +1,5 @@
+*.txt
+*.sln
+*.vcxproj
+*.vcxproj.filters
+*.opendb

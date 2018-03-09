@@ -3,3 +3,8 @@
 *.vcxproj
 *.vcxproj.filters
 *.opendb
+*.lastbuildstate
+*.tlog
+*.idb
+*.ipch
+*VC.db

@@ -1,5 +1,6 @@
 #pragma once
 #include "stdafx.h"
+#include <algorithm>
 
 namespace sort
 {
@@ -14,33 +15,39 @@ namespace sort
 	class CPU
 	{
 	public:
-		template <typename iterator>
-		static void BubbleSort(iterator begin, iterator end);
+		template<typename iterator, typename CompareFunc = std::less<typename std::iterator_traits<iterator>::value_type>>
+		static void BubbleSort(iterator begin, iterator end, CompareFunc cmpf = CompareFunc());
+		template<typename iterator, typename CompareFunc = std::less<typename std::iterator_traits<iterator>::value_type>>
+		static void MergeSort(iterator begin, iterator end, CompareFunc cmpf = CompareFunc());
+
 	private:
 		CPU() {};
 		~CPU() {};
 	};
 
-	template<typename iterator>
-	inline void CPU::BubbleSort(iterator begin, iterator end)
+	template<typename iterator, typename CompareFunc>
+	inline void CPU::BubbleSort(iterator begin, iterator end, CompareFunc cmpf)
 	{
 		iterator sorting = begin;
-
-		while (sorting != end)
+		for (sorting; sorting != end; ++sorting)
 		{
-			iterator compareTo = sorting + 1;
+			iterator compareTo;
 			iterator least = sorting;
-
-			while (compareTo != end)
-			{
-				if (*least > *compareTo)
-				{
+			for (compareTo = sorting + 1; compareTo != end; ++compareTo)
+				if (cmpf(*compareTo, *least))
 					least = compareTo;
-				}
-				++compareTo;
-			}
 			sort::swap<iterator, iterator::value_type>(sorting, least);
-			++sorting;
 		}
 	}
+
+	template<typename iterator, typename CompareFunc>
+	inline void CPU::MergeSort(iterator begin, iterator end, CompareFunc cmpf)
+	{
+		if (std::distance(begin, end) < 2) return;
+		iterator middle = begin + std::distance(begin, end) / 2;
+		MergeSort(begin, middle, cmpf);
+		MergeSort(middle, end, cmpf);
+		std::inplace_merge(begin, middle, end, cmpf); //TODO: replace with my own impl.
+	}
+
 }
